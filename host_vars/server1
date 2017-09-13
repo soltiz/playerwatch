@@ -1,0 +1,3 @@
+---
+punchplatform_user: ubuntu
+standalone_install_options: "--bind-to-all-interfaces"

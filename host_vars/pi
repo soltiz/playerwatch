@@ -1,0 +1,25 @@
+---
+punchplatform_group: lmc
+punchplatform_user: pi
+punchplatform_daemons_user: pi
+data_root: /data
+install_root: /data/opt
+logs_root: /data/logs
+lmc_logs_dir: "{{logs_root}}/LMCDIR"
+metricbeat_version: metricbeat-5.5.0-linux-x86_64
+local_punchplatform_distribs_dir: /home/cedric/lmc/external
+data_device: /dev/sda1
+metricbeat_reporting_interval: 30
+elasticsearch_cluster_metrics_nodes: 
+ - server1
+modules:
+  system:
+    metricsets:
+      cpu:
+      load:
+      diskio:
+      filesystem:
+      memory:
+      network:
+    additional_settings:
+      cpu_ticks: false

@@ -1,0 +1,6 @@
+---
+METRICBEAT_PERIOD_IN_SECONDS: "{{ metricbeat_reporting_interval }}"
+#METRICBEAT_USER: "{{ punchplatform_daemons_user }}"
+METRICBEAT_USER: "root"
+METRICBEAT_GROUP: "{{ punchplatform_group }}"
+METRICBEAT_LOGS_DIR: "{{logs_root}}/metricbeat/"

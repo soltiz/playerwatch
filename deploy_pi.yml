@@ -1,0 +1,26 @@
+---
+- hosts: pi
+  gather_facts: no
+  become: true
+  tasks:
+    - lineinfile:
+      args:
+        dest: /etc/hosts
+        line: "213.32.76.38 server1"
+        regexp: server1
+
+    - file: name={{item}} state=directory owner={{punchplatform_user}}
+      with_items:
+        - "{{data_root}}"
+        - "{{logs_root}}"
+        - "{{install_root}}"
+        - "{{lmc_logs_dir}}"
+
+    - mount: name={{data_root}} src={{data_device}} state=mounted fstype=ext4
+
+    - file: dest=/var/log/LMC state=link src={{lmc_logs_dir}} owner={{punchplatform_daemons_user}}
+
+
+- hosts: pi
+  roles:
+    - pi-metricbeat

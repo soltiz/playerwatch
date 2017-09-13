@@ -1,0 +1,40 @@
+---
+- name: os-specific vars
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: ensure user exists with correct group
+  user: name={{ METRICBEAT_USER }} group={{ METRICBEAT_GROUP }} createhome=no append=yes
+
+#- name: is metricbeat deployed ?
+#  file: path={{ METRICBEAT_INSTALL_DIR }} state=directory owner={{ METRICBEAT_USER}} group={{ METRICBEAT_GROUP }}
+#  register: metricbeatIsStillDeployed
+
+- name: copy the metricbeat archive
+  unarchive: src={{ local_punchplatform_distribs_dir }}/{{ metricbeat_version }}.tar.gz dest={{ install_root }} creates={{ METRICBEAT_INSTALL_DIR }}
+
+- name: ensure the metricbeat directory is owner by the right user
+  file: path={{ METRICBEAT_INSTALL_DIR }} state=directory owner={{ METRICBEAT_USER}} group={{ METRICBEAT_GROUP }} recurse=yes
+
+- name: ensure the metricbeat logs directory is owner by the right user
+  file: path={{ METRICBEAT_LOGS_DIR }} state=directory owner={{ METRICBEAT_USER}} group={{ METRICBEAT_GROUP }}
+
+- name: update the configuration file by templating
+  template: src=metricbeat.yml.j2 dest={{ METRICBEAT_INSTALL_DIR }}/metricbeat.yml owner={{ METRICBEAT_USER}} group={{ METRICBEAT_GROUP }}
+  notify:
+    - restart metricbeat
+
+- name: install metricbeat supervisord configuration
+  template:
+    dest: "{{supervisor_configs_dir}}/metricbeat.conf"
+    src: supervisord.conf
+  notify: 
+    - reload supervisord
+    - restart metricbeat
+
+- name: ensure metricbeat daemon is now runnning
+  command: supervisorctl status metricbeat
+  register: metricbeat_status_result
+  changed_when:  ( not 'RUNNING' in metricbeat_status_result.stdout ) and not 'STARTING' in metricbeat_status_result.stdout
+  notify:
+    - reload supervisord
+    - start metricbeat

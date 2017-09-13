@@ -1,0 +1,14 @@
+---
+
+- name: restart metricbeat
+  command: supervisorctl restart metricbeat
+  notify: ensure metricbeat is now runnning
+
+- name: start metricbeat
+  command: supervisorctl start metricbeat
+  notify: ensure metricbeat is now runnning
+
+- name: ensure metricbeat is now runnning
+  command: supervisorctl status metricbeat
+  register: metricbeat_status_result
+  failed_when: not 'RUNNING' in metricbeat_status_result.stdout

@@ -1,0 +1,23 @@
+---
+
+
+- hosts: server1
+  vars:
+    standalone_lib_dir: /home/cedric/lmc/pp-packaging/punchplatform-packaging/punchplatform-standalone/target
+  tasks:
+    - name: find local standalone archive
+      local_action: shell ls {{standalone_lib_dir}} | grep '.zip'
+      changed_when: false
+      register: archive_lookup
+
+    - name: define dynamic variables
+      set_fact: punchplatform_standalone_archive={{standalone_lib_dir}}/{{archive_lookup.stdout}}
+
+#    - name: deploy java
+#      apt: name=openjdk-8-jdk
+#      become: true
+
+- hosts: server1
+  roles:
+   - standalone
+  

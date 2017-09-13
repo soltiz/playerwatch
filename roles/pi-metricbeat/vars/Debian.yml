@@ -1,0 +1,2 @@
+---
+METRICBEAT_INSTALL_DIR: "{{ install_root }}/{{ metricbeat_version }}"
