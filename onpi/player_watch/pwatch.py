@@ -95,6 +95,8 @@ while True:
 			player_session['end']=curts
 			# and let's persist the document for later insertion
 			store_queued_session_content(player_session,session_id)
+			# and index it (with temporary content) so we have real time
+			index_doc(player_session,"psession",session_id)
 		else:
 			if player_session:
 				# END OF A SESSION
@@ -107,5 +109,5 @@ while True:
 		traceback.print_exc()
 		esConnection=None
 		
-	time.sleep(1)
+	time.sleep(30)
 
